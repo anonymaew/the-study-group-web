@@ -1,5 +1,3 @@
-import { NextPage } from 'next';
-
 import Navbar from '../components/navbar';
 
 const Page = (props: {

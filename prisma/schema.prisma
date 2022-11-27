@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-    provider = "mysql"
+    provider = "postgresql"
     // NOTE: When using postgresql, mysql or sqlserver, uncomment the @db.Text annotations in model Account below
     // Further reading: 
     // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
@@ -46,13 +46,22 @@ model Session {
 }
 
 model User {
-    id            String    @id @default(cuid())
-    name          String?
-    email         String?   @unique
-    emailVerified DateTime?
-    image         String?
-    accounts      Account[]
-    sessions      Session[]
+    id                String              @id @default(cuid())
+    name              String
+    role              Role                @default(STUDENT)
+    email             String?             @unique
+    emailVerified     DateTime?
+    phone             String?
+    details           String?             @db.Text
+    image             String?
+    compantId         String?
+    company           MainCompany?        @relation(fields: [compantId], references: [id])
+    accounts          Account[]
+    sessions          Session[]
+    Page              Page[]
+    TeacherEnrollment TeacherEnrollment[]
+    StudentEnrollment StudentEnrollment[]
+    Course            Course[]
 }
 
 model VerificationToken {
@@ -71,54 +80,76 @@ enum Company {
 }
 
 model MainCompany {
-    id       String     @id @default(cuid())
-    name     Company
-    Course   Course[]
-    Teacher  Teacher[]
-    Employee Employee[]
+    id     String   @id @default(cuid())
+    name   Company
+    Course Course[]
+    User   User[]
 }
 
 model Course {
-    id         String      @id @default(cuid())
-    name       String
-    detail     String?
-    teacherId  String
-    teacher    Teacher     @relation(fields: [teacherId], references: [id], onDelete: Cascade)
-    companyId  String
-    company    MainCompany @relation(fields: [companyId], references: [id], onDelete: Cascade)
-    employeeId String
-    employee   Employee    @relation(fields: [employeeId], references: [id], onDelete: Cascade)
-    createdAt  DateTime    @default(now())
+    id                String              @id @default(cuid())
+    pageId            String
+    page              Page                @relation(fields: [pageId], references: [id])
+    companyId         String
+    company           MainCompany         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+    published         Boolean             @default(false)
+    approverId        String?
+    approver          User?               @relation(fields: [approverId], references: [id], onDelete: Cascade)
+    createdAt         DateTime            @default(now())
+    updatedAt         DateTime            @updatedAt
+    TeacherEnrollment TeacherEnrollment[]
+    StudentEnrollment StudentEnrollment[]
+    Lesson            Lesson[]
 }
 
-model Teacher {
-    id          String      @id @default(cuid())
-    name        String
-    description String?
-    companyId   String
-    company     MainCompany @relation(fields: [companyId], references: [id], onDelete: Cascade)
-    Course      Course[]
+model Lesson {
+    id        String   @id @default(cuid())
+    pageId    String
+    page      Page     @relation(fields: [pageId], references: [id])
+    courseId  String
+    course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }
 
-model Employee {
-    id           String       @id @default(cuid())
-    name         String
-    birthday     DateTime?
-    phone        String?
-    companyId    String?
-    company      MainCompany? @relation(fields: [companyId], references: [id], onDelete: Cascade)
-    permissionId String?
-    permission   Permission?  @relation(fields: [permissionId], references: [id], onDelete: Cascade)
-    Course       Course[]
+model TeacherEnrollment {
+    id        String @id @default(cuid())
+    courseId  String
+    course    Course @relation(fields: [courseId], references: [id])
+    teacherId String
+    teacher   User   @relation(fields: [teacherId], references: [id])
 }
 
-enum PermissionRole {
+enum StudentEnrollmentStatus {
+    PENDING
+    APPROVED
+    REJECTED
+}
+
+model StudentEnrollment {
+    id        String                  @id @default(cuid())
+    courseId  String
+    course    Course                  @relation(fields: [courseId], references: [id])
+    studentId String
+    student   User                    @relation(fields: [studentId], references: [id])
+    status    StudentEnrollmentStatus @default(PENDING)
+}
+
+model Page {
+    id        String   @id @default(cuid())
+    name      String
+    authorId  String
+    author    User     @relation(fields: [authorId], references: [id])
+    detail    String?
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    Course    Course[]
+    Lesson    Lesson[]
+}
+
+enum Role {
     ADMIN
-    STAFF
-}
-
-model Permission {
-    id       String         @id @default(cuid())
-    role     PermissionRole
-    Employee Employee[]
+    EMPLOYEE
+    TEACHER
+    STUDENT
 }
