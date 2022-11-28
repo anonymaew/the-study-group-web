@@ -1,5 +1,5 @@
 import { z } from 'zod';
 
-export const teacherReadOne = z.object({
+export const userReadOne = z.object({
   id: z.string(),
 });

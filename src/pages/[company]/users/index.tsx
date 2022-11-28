@@ -5,7 +5,10 @@ import { trpc } from '../../../utils/trpc';
 
 const UsersPage = () => {
   const router = useRouter();
-  const { company } = router.query as { company: string };
+  const { company, type } = router.query as {
+    company: string;
+    type?: string | null;
+  };
   const { data: users, isLoading } = trpc.user.read.all.useQuery();
 
   return (
@@ -14,11 +17,16 @@ const UsersPage = () => {
       data={{
         heading: "Users",
         items:
-          users?.map((teacher) => ({
-            id: teacher.id.toString(),
-            name: teacher.name,
-            link: `/${company}/users/${teacher.id}`,
-          })) || [],
+          users
+            ?.map((user) => ({
+              id: user.id.toString(),
+              name: user.name,
+              link: `/${company}/users/${user.id}`,
+            }))
+            .filter((user) => {
+              if (type === null || type == undefined) return true;
+              return user.name.toLowerCase().includes(type.toLowerCase());
+            }) || [],
       }}
     ></ListsPage>
   );

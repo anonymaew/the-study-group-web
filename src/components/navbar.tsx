@@ -19,7 +19,7 @@ const Navbar = () => {
         <Link href={`/${company as string}/courses/`}>
           <a className="mx-4 hover:underline">Courses</a>
         </Link>
-        <Link href={`/${company as string}/teachers/`}>
+        <Link href={`/${company as string}/users?type=teacher`}>
           <a className="mx-4 hover:underline">Teachers</a>
         </Link>
       </div>
