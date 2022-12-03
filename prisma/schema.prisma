@@ -59,9 +59,9 @@ model User {
     accounts          Account[]
     sessions          Session[]
     Page              Page[]
+    Course            Course[]
     TeacherEnrollment TeacherEnrollment[]
     StudentEnrollment StudentEnrollment[]
-    Course            Course[]
 }
 
 model VerificationToken {
@@ -86,6 +86,29 @@ model MainCompany {
     User   User[]
 }
 
+model TeacherEnrollment {
+    id       String @id @default(cuid())
+    userId   String
+    user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    courseId String
+    course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+}
+
+enum StudentEnrollmentStatus {
+    PENDING
+    APPROVED
+    REJECTED
+}
+
+model StudentEnrollment {
+    id       String                  @id @default(cuid())
+    userId   String
+    user     User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    courseId String
+    course   Course                  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+    status   StudentEnrollmentStatus @default(PENDING)
+}
+
 model Course {
     id                String              @id @default(cuid())
     pageId            String
@@ -97,9 +120,9 @@ model Course {
     approver          User?               @relation(fields: [approverId], references: [id], onDelete: Cascade)
     createdAt         DateTime            @default(now())
     updatedAt         DateTime            @updatedAt
+    Lesson            Lesson[]
     TeacherEnrollment TeacherEnrollment[]
     StudentEnrollment StudentEnrollment[]
-    Lesson            Lesson[]
 }
 
 model Lesson {
@@ -110,29 +133,6 @@ model Lesson {
     course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
-}
-
-model TeacherEnrollment {
-    id        String @id @default(cuid())
-    courseId  String
-    course    Course @relation(fields: [courseId], references: [id])
-    teacherId String
-    teacher   User   @relation(fields: [teacherId], references: [id])
-}
-
-enum StudentEnrollmentStatus {
-    PENDING
-    APPROVED
-    REJECTED
-}
-
-model StudentEnrollment {
-    id        String                  @id @default(cuid())
-    courseId  String
-    course    Course                  @relation(fields: [courseId], references: [id])
-    studentId String
-    student   User                    @relation(fields: [studentId], references: [id])
-    status    StudentEnrollmentStatus @default(PENDING)
 }
 
 model Page {

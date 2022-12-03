@@ -30,13 +30,8 @@ const Home: NextPage = () => {
               <p className="my-6 sm:my-12">The Study Group</p>
             </HomeButton>
           </div>
-          <div className="grid p-3 sm:grid-cols-3">
-            <HomeButton to="the-study-triam">
-              The Study <br className="hidden sm:inline" />
-              Triam
-            </HomeButton>
+          <div className="grid p-3 sm:grid-cols-1">
             <HomeButton to="jic">JIC</HomeButton>
-            <HomeButton to="dekthai">DekThai</HomeButton>
           </div>
         </div>
       </main>

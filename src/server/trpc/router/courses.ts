@@ -1,39 +1,58 @@
-import { courseReadOne } from '../../../types/courses';
-import { protectedProcedure, publicProcedure, router } from '../trpc';
+import {
+    courseCreate, courseId, courseReadOne, courseUpdateApprove, courseUpdateContent
+} from '../../../types/courses';
+import {
+    employeeProcedure, protectedProcedure, publicProcedure, router, teacherProcedure
+} from '../trpc';
 
 export const courseRouter = router({
-  read: router({
-    all: publicProcedure.query(({ ctx }) => {
-      return ctx.prisma.course.findMany({
-        include: {
-          page: true,
-          TeacherEnrollment: {
-            include: {
-              teacher: true,
+  create: teacherProcedure
+    .input(courseCreate)
+    .mutation(async ({ ctx, input }) => {
+      return await ctx.prisma.teacherEnrollment.create({
+        data: {
+          course: {
+            create: {
+              page: {
+                create: {
+                  name: input.name,
+                  author: {
+                    connect: {
+                      id: ctx.session.user.id,
+                    },
+                  },
+                },
+              },
+              company: {
+                connect: {
+                  id: input.companyId,
+                },
+              },
+            },
+          },
+          user: {
+            connect: {
+              id: ctx.session.user.id,
             },
           },
         },
       });
     }),
-    enrolled: protectedProcedure.query(({ ctx }) => {
-      return ctx.prisma.course.findMany({
-        where: {
-          OR: [
-            {
-              StudentEnrollment: {
-                some: { studentId: ctx.session.user.id, status: "APPROVED" },
-              },
-              published: true,
+  read: router({
+    all: publicProcedure.query(async ({ ctx }) => {
+      return await ctx.prisma.course.findMany({
+        include: {
+          page: true,
+          TeacherEnrollment: {
+            include: {
+              user: true,
             },
-            {
-              TeacherEnrollment: { some: { teacherId: ctx.session.user.id } },
-            },
-          ],
+          },
         },
       });
     }),
-    one: publicProcedure.input(courseReadOne).query(({ ctx, input }) => {
-      return ctx.prisma.course.findUnique({
+    one: publicProcedure.input(courseReadOne).query(async ({ ctx, input }) => {
+      return await ctx.prisma.course.findUnique({
         where: {
           id: input.id,
         },
@@ -41,11 +60,44 @@ export const courseRouter = router({
           page: true,
           TeacherEnrollment: {
             include: {
-              teacher: true,
+              user: true,
             },
           },
         },
       });
     }),
+  }),
+  update: router({
+    content: teacherProcedure
+      .input(courseUpdateContent)
+      .mutation(async ({ ctx, input }) => {
+        return await ctx.prisma.course.update({
+          where: {
+            id: input.id,
+          },
+          data: {
+            page: {
+              update: input.page,
+            },
+          },
+        });
+      }),
+    approve: employeeProcedure
+      .input(courseUpdateApprove)
+      .mutation(async ({ ctx, input }) => {
+        return await ctx.prisma.course.update({
+          where: {
+            id: input.id,
+          },
+          data: {
+            published: input.publish,
+            approver: {
+              connect: {
+                id: ctx.session.user.id,
+              },
+            },
+          },
+        });
+      }),
   }),
 });
