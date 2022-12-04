@@ -2,7 +2,8 @@ import {
     courseCreate, courseId, courseReadOne, courseUpdateApprove, courseUpdateContent
 } from '../../../types/courses';
 import {
-    employeeProcedure, protectedProcedure, publicProcedure, router, teacherProcedure
+    employeeProcedure, protectedProcedure, publicProcedure, router, teacherProcedure,
+    writeCourseProcedure
 } from '../trpc';
 
 export const courseRouter = router({
@@ -16,11 +17,6 @@ export const courseRouter = router({
               page: {
                 create: {
                   name: input.name,
-                  author: {
-                    connect: {
-                      id: ctx.session.user.id,
-                    },
-                  },
                 },
               },
               company: {
@@ -42,10 +38,31 @@ export const courseRouter = router({
     all: publicProcedure.query(async ({ ctx }) => {
       return await ctx.prisma.course.findMany({
         include: {
-          page: true,
-          TeacherEnrollment: {
-            include: {
-              user: true,
+          page: {
+            select: {
+              name: true,
+              createdAt: true,
+            },
+          },
+        },
+      });
+    }),
+    enrolled: protectedProcedure.query(async ({ ctx }) => {
+      return await ctx.prisma.course.findMany({
+        where: {
+          OR: [
+            { teacherEnrollment: { some: { userId: ctx.session.user.id } } },
+            {
+              studentEnrollment: { some: { userId: ctx.session.user.id } },
+              published: true,
+            },
+          ],
+        },
+        include: {
+          page: {
+            select: {
+              name: true,
+              createdAt: true,
             },
           },
         },
@@ -58,17 +75,13 @@ export const courseRouter = router({
         },
         include: {
           page: true,
-          TeacherEnrollment: {
-            include: {
-              user: true,
-            },
-          },
+          teacherEnrollment: true,
         },
       });
     }),
   }),
   update: router({
-    content: teacherProcedure
+    content: writeCourseProcedure
       .input(courseUpdateContent)
       .mutation(async ({ ctx, input }) => {
         return await ctx.prisma.course.update({

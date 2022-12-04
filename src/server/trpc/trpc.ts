@@ -1,6 +1,9 @@
 import superjson from 'superjson';
+import { z } from 'zod';
 
 import { initTRPC, TRPCError } from '@trpc/server';
+
+import { courseId } from '../../types/courses';
 
 import type { Context } from "./context";
 const t = initTRPC.context<Context>().create({
@@ -76,4 +79,52 @@ export const adminProcedure = t.procedure
     if (!user || roles[user.role] < roles.ADMIN)
       throw new TRPCError({ code: "UNAUTHORIZED", cause: "Not an admin" });
     return next();
+  });
+
+export const writeCourseProcedure = t.procedure
+  .use(isAuthed)
+  .input(z.object({ courseId }))
+  .use(async ({ ctx, input, next }) => {
+    const result = await ctx.prisma.user.findUnique({
+      where: {
+        id: ctx.session.user.id,
+      },
+      include: {
+        teacherEnrollment: {
+          where: {
+            courseId: input.courseId,
+          },
+        },
+      },
+    });
+    if (
+      result &&
+      (result.teacherEnrollment.length > 0 ||
+        roles[result.role] > roles.TEACHER)
+    )
+      return next();
+    throw new TRPCError({ code: "UNAUTHORIZED", cause: "Not your course" });
+  });
+
+export const readCourseProcedure = t.procedure
+  .use(isAuthed)
+  .input(z.object({ courseId }))
+  .use(async ({ ctx, input, next }) => {
+    const result = await ctx.prisma.user.findUnique({
+      where: {
+        id: ctx.session.user.id,
+      },
+      include: {
+        studentEnrollment: { where: { courseId: input.courseId } },
+        teacherEnrollment: { where: { courseId: input.courseId } },
+      },
+    });
+    if (
+      result &&
+      (result.studentEnrollment.length > 0 ||
+        result.teacherEnrollment.length > 0 ||
+        roles[result.role] > roles.TEACHER)
+    )
+      return next();
+    throw new TRPCError({ code: "UNAUTHORIZED", cause: "Not your course" });
   });
