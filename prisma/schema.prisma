@@ -58,10 +58,9 @@ model User {
     company           MainCompany?        @relation(fields: [compantId], references: [id])
     accounts          Account[]
     sessions          Session[]
-    Page              Page[]
     Course            Course[]
-    TeacherEnrollment TeacherEnrollment[]
-    StudentEnrollment StudentEnrollment[]
+    teacherEnrollment teacherEnrollment[]
+    studentEnrollment studentEnrollment[]
 }
 
 model VerificationToken {
@@ -86,27 +85,10 @@ model MainCompany {
     User   User[]
 }
 
-model TeacherEnrollment {
-    id       String @id @default(cuid())
-    userId   String
-    user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-    courseId String
-    course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
-}
-
 enum StudentEnrollmentStatus {
     PENDING
     APPROVED
     REJECTED
-}
-
-model StudentEnrollment {
-    id       String                  @id @default(cuid())
-    userId   String
-    user     User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
-    courseId String
-    course   Course                  @relation(fields: [courseId], references: [id], onDelete: Cascade)
-    status   StudentEnrollmentStatus @default(PENDING)
 }
 
 model Course {
@@ -121,8 +103,24 @@ model Course {
     createdAt         DateTime            @default(now())
     updatedAt         DateTime            @updatedAt
     Lesson            Lesson[]
-    TeacherEnrollment TeacherEnrollment[]
-    StudentEnrollment StudentEnrollment[]
+    teacherEnrollment teacherEnrollment[]
+    studentEnrollment studentEnrollment[]
+}
+
+model teacherEnrollment {
+    id       String @id @default(cuid())
+    courseId String
+    course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+    userId   String
+    user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model studentEnrollment {
+    id       String @id @default(cuid())
+    courseId String
+    course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+    userId   String
+    user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Lesson {
@@ -138,8 +136,6 @@ model Lesson {
 model Page {
     id        String   @id @default(cuid())
     name      String
-    authorId  String
-    author    User     @relation(fields: [authorId], references: [id])
     detail    String?
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
