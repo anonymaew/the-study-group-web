@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
+import Users from '../../../components/users';
 import CardsPage from '../../../layouts/cards';
 import { trpc } from '../../../utils/trpc';
 
@@ -11,7 +12,7 @@ const CoursesPage = () => {
 
   return (
     <CardsPage
-      loading={courses === null || courses === undefined}
+      loading={isLoading || courses === null || courses === undefined}
       data={{
         heading: "Courses",
         items:
@@ -27,13 +28,11 @@ const CoursesPage = () => {
                 <div className="flex w-full items-center">
                   <span className="inline-block aspect-square w-12 rounded-full bg-zinc-500"></span>
                   <span className="px-4">
-                    <Link
-                      href={`/${company}/users/${course.TeacherEnrollment[0]?.teacherId}`}
-                    >
-                      <a className="text-zinc-700 dark:text-zinc-300">
-                        {course.TeacherEnrollment[0]?.teacher.name}
-                      </a>
-                    </Link>
+                    <Users
+                      data={course.teacherEnrollment.map(
+                        (enrollment) => enrollment.user
+                      )}
+                    />
                   </span>
                 </div>
                 <p className="text-sm text-zinc-500">{`Created at: ${course.createdAt.toLocaleString(

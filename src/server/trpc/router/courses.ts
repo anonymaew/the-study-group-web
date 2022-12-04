@@ -41,9 +41,11 @@ export const courseRouter = router({
           page: {
             select: {
               name: true,
+              detail: true,
               createdAt: true,
             },
           },
+          teacherEnrollment: { select: { user: true } },
         },
       });
     }),
@@ -62,9 +64,11 @@ export const courseRouter = router({
           page: {
             select: {
               name: true,
+              detail: true,
               createdAt: true,
             },
           },
+          teacherEnrollment: { select: { user: true } },
         },
       });
     }),
@@ -75,7 +79,7 @@ export const courseRouter = router({
         },
         include: {
           page: true,
-          teacherEnrollment: true,
+          teacherEnrollment: { select: { user: true } },
         },
       });
     }),

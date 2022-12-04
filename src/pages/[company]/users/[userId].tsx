@@ -4,7 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import ProsePage from '../../../layouts/prose';
 import { trpc } from '../../../utils/trpc';
 
-const TeacherPage = () => {
+const UserPage = () => {
   const router = useRouter();
   const { userId } = router.query as { userId: string };
   const { data: user, isLoading } = trpc.user.read.one.useQuery({
@@ -36,4 +36,4 @@ const TeacherPage = () => {
   );
 };
 
-export default TeacherPage;
+export default UserPage;
