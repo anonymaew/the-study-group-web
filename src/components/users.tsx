@@ -4,7 +4,7 @@ import { User } from '@prisma/client';
 
 const Users = (props: { data: User[] }) => {
   return (
-    <div className="">
+    <span className="">
       {props.data.map((user, index) => (
         <span className="mr-2" key={index}>
           {user.image ? (
@@ -23,7 +23,7 @@ const Users = (props: { data: User[] }) => {
         return (
           <>
             <span className="whitespace-nowrap" key={index}>
-              <Link href={`/${user.companyId}/users/${user.id}`}>
+              <Link href={`/${user.companyId}/users/${user.id.slice(-6)}`}>
                 {user.name}
               </Link>
             </span>
@@ -31,7 +31,7 @@ const Users = (props: { data: User[] }) => {
           </>
         );
       })}
-    </div>
+    </span>
   );
 };
 

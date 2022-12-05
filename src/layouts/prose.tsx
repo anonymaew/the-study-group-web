@@ -6,7 +6,7 @@ const ProsePage = (props: {
 }): JSX.Element => {
   return (
     <Page loading={props.loading}>
-      <div className="prose prose-zinc h-full max-w-none dark:prose-invert">
+      <div className="prose prose-sm prose-zinc h-full max-w-none dark:prose-invert">
         {props.children}
       </div>
     </Page>

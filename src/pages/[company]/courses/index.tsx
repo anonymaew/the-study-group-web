@@ -19,7 +19,7 @@ const CoursesPage = () => {
           courses?.map((course) => ({
             id: course.id.toString(),
             name: course.page.name,
-            link: `/${company}/courses/${course.id}`,
+            link: `/${company}/courses/${course.id.slice(-6)}`,
             imgLink: null,
             description: course.page.detail,
             price: 100,

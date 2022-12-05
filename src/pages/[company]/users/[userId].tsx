@@ -19,6 +19,7 @@ const UserPage = () => {
             className="w-full rounded-full"
             src={user.image}
             alt={user.name}
+            referrerPolicy="no-referrer"
           ></img>
         )}
       </div>

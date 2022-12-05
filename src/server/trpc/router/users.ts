@@ -9,10 +9,8 @@ export const userRouter = router({
       return ctx.prisma.user.findMany({}) || [];
     }),
     one: publicProcedure.input(userReadOne).query(({ ctx, input }) => {
-      return ctx.prisma.user.findUnique({
-        where: {
-          id: input.id,
-        },
+      return ctx.prisma.user.findFirst({
+        where: { id: { endsWith: input.id } },
       });
     }),
   }),

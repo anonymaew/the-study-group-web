@@ -9,7 +9,9 @@ const Blog = (props: { data: Page; authors: User[]; writable: boolean }) => {
   return (
     <>
       <h1 className="text-center">{props.data.name}</h1>
-      <Users data={props.authors} />
+      <div className="text-center">
+        <Users data={props.authors} />
+      </div>
       <div className="flex flex-row flex-wrap items-center justify-center pb-8">
         <span className="mx-8 py-4">
           Created at:{" "}

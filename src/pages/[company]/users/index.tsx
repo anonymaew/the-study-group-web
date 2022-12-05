@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router';
 
+import Users from '../../../components/users';
 import ListsPage from '../../../layouts/lists';
 import { trpc } from '../../../utils/trpc';
 
@@ -18,15 +19,13 @@ const UsersPage = () => {
         heading: "Users",
         items:
           users
-            ?.map((user) => ({
-              id: user.id.toString(),
-              name: user.name,
-              link: `/${company}/users/${user.id}`,
-            }))
-            .filter((user) => {
-              if (type === null || type == undefined) return true;
-              return user.name.toLowerCase().includes(type.toLowerCase());
-            }) || [],
+            ?.filter(
+              (user) =>
+                type !== null &&
+                type !== undefined &&
+                user.role === type.toUpperCase()
+            )
+            .map((user) => <Users data={[user]} />) || [],
       }}
     ></ListsPage>
   );
