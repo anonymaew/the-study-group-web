@@ -25,16 +25,11 @@ const CoursesPage = () => {
             price: 100,
             children: (
               <>
-                <div className="flex w-full items-center">
-                  <span className="inline-block aspect-square w-12 rounded-full bg-zinc-500"></span>
-                  <span className="px-4">
-                    <Users
-                      data={course.teacherEnrollment.map(
-                        (enrollment) => enrollment.user
-                      )}
-                    />
-                  </span>
-                </div>
+                <Users
+                  data={course.teacherEnrollment.map(
+                    (enrollment) => enrollment.user
+                  )}
+                />
                 <p className="text-sm text-zinc-500">{`Created at: ${course.createdAt.toLocaleString(
                   "en-US",
                   {

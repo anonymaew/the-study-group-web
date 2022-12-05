@@ -54,8 +54,8 @@ model User {
     phone             String?
     details           String?             @db.Text
     image             String?
-    compantId         String?
-    company           MainCompany?        @relation(fields: [compantId], references: [id])
+    companyId         String?
+    company           MainCompany?        @relation(fields: [companyId], references: [id])
     accounts          Account[]
     sessions          Session[]
     Course            Course[]
