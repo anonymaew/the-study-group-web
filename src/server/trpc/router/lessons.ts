@@ -2,10 +2,7 @@ import { z } from 'zod';
 
 import { courseId } from '../../../types/courses';
 import { lessonCreate, lessonId, lessonUpdate } from '../../../types/lessons';
-import {
-    protectedProcedure, publicProcedure, readCourseProcedure, router, teacherProcedure,
-    writeCourseProcedure
-} from '../trpc';
+import { readCourseProcedure, router, writeCourseProcedure } from '../trpc';
 
 export const lessonsRouter = router({
   create: writeCourseProcedure

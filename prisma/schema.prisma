@@ -71,16 +71,10 @@ model VerificationToken {
     @@unique([identifier, token])
 }
 
-enum Company {
-    JIC
-    THE_STUDY_GROUP
-    THE_STUDY_TRIAM
-    DEKTHAI
-}
-
 model MainCompany {
     id     String   @id @default(cuid())
-    name   Company
+    name   String
+    color  String
     Course Course[]
     User   User[]
 }

@@ -1,6 +1,6 @@
 import { signIn, signOut, useSession } from 'next-auth/react';
 
-import ProsePage from '../layouts/prose';
+import ProsePage from '../../layouts/prose';
 
 const AccountPage = () => {
   const { data: session, status } = useSession();
@@ -20,12 +20,14 @@ const AccountPage = () => {
           </button>
         </div>
       ) : (
+        // sign in with google button
         <button
           onClick={() => {
             signIn("google");
           }}
+          className="mx-auto block w-48 rounded-md border border-gray-500 p-2 duration-200 ease-in-out hover:scale-105"
         >
-          Login with Google
+          Sign in with Google
         </button>
       )}
     </ProsePage>

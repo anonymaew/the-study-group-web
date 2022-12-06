@@ -1,5 +1,5 @@
 import {
-    courseCreate, courseId, courseReadOne, courseUpdateApprove, courseUpdateContent
+    courseCreate, courseReadOne, courseUpdateApprove, courseUpdateContent
 } from '../../../types/courses';
 import {
     employeeProcedure, protectedProcedure, publicProcedure, router, teacherProcedure,

@@ -6,7 +6,7 @@ import { trpc } from '../../../utils/trpc';
 
 const CoursePage = () => {
   const router = useRouter();
-  const { company, courseId } = router.query;
+  const { courseId } = router.query;
   const { data: course, isLoading } = trpc.course.read.one.useQuery({
     id: courseId as string,
   });

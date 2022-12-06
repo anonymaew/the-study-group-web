@@ -6,9 +6,8 @@ import { trpc } from '../../../utils/trpc';
 
 const UsersPage = () => {
   const router = useRouter();
-  const { company, type } = router.query as {
-    company: string;
-    type?: string | null;
+  const { role } = router.query as {
+    role?: string | null;
   };
   const { data: users, isLoading } = trpc.user.read.all.useQuery();
 
@@ -21,11 +20,11 @@ const UsersPage = () => {
           users
             ?.filter(
               (user) =>
-                type !== null &&
-                type !== undefined &&
-                user.role === type.toUpperCase()
+                role !== null &&
+                role !== undefined &&
+                user.role === role.toUpperCase()
             )
-            .map((user) => <Users data={[user]} />) || [],
+            .map((user, index) => <Users data={[user]} key={index} />) || [],
       }}
     ></ListsPage>
   );

@@ -1,5 +1,3 @@
-import { Role, User } from '@prisma/client';
-
 import { userReadOne } from '../../../types/users';
 import { publicProcedure, router } from '../trpc';
 

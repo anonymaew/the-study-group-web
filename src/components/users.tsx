@@ -1,8 +1,18 @@
 import Link from 'next/link';
+import { useEffect } from 'react';
 
 import { User } from '@prisma/client';
 
-const Users = (props: { data: User[] }) => {
+const Users = (props: {
+  data: User[];
+  flags?: {
+    noIcon?: boolean;
+    noName?: boolean;
+  };
+}) => {
+  useEffect(() => {
+    console.log("got refreshed");
+  }, []);
   return (
     <span className="">
       {props.data.map((user, index) => (
@@ -19,18 +29,19 @@ const Users = (props: { data: User[] }) => {
           )}
         </span>
       ))}
-      {props.data.map((user, index) => {
-        return (
-          <>
-            <span className="whitespace-nowrap" key={index}>
-              <Link href={`/${user.companyId}/users/${user.id.slice(-6)}`}>
-                {user.name}
-              </Link>
+      {props.flags?.noName !== true &&
+        props.data.map((user, index) => {
+          return (
+            <span key={index}>
+              <span className="whitespace-nowrap hover:underline">
+                <Link href={`/${user.companyId}/users/${user.id.slice(-6)}`}>
+                  {user.name}
+                </Link>
+              </span>
+              {index !== props.data.length - 1 && <span>, </span>}
             </span>
-            {index !== props.data.length - 1 && <span>, </span>}
-          </>
-        );
-      })}
+          );
+        })}
     </span>
   );
 };
