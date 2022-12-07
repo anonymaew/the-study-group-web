@@ -38,13 +38,7 @@ export const courseRouter = router({
     all: publicProcedure.query(async ({ ctx }) => {
       return await ctx.prisma.course.findMany({
         include: {
-          page: {
-            select: {
-              name: true,
-              detail: true,
-              createdAt: true,
-            },
-          },
+          page: true,
           teacherEnrollment: { select: { user: true } },
         },
       });
@@ -61,13 +55,7 @@ export const courseRouter = router({
           ],
         },
         include: {
-          page: {
-            select: {
-              name: true,
-              detail: true,
-              createdAt: true,
-            },
-          },
+          page: true,
           teacherEnrollment: { select: { user: true } },
         },
       });

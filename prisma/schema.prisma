@@ -52,7 +52,8 @@ model User {
     email             String?             @unique
     emailVerified     DateTime?
     phone             String?
-    details           String?             @db.Text
+    descriptionId     String?
+    description       Page?               @relation(fields: [descriptionId], references: [id])
     image             String?
     companyId         String?
     company           MainCompany?        @relation(fields: [companyId], references: [id])
@@ -135,6 +136,7 @@ model Page {
     updatedAt DateTime @updatedAt
     Course    Course[]
     Lesson    Lesson[]
+    User      User[]
 }
 
 enum Role {

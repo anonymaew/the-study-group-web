@@ -17,6 +17,20 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
+  events: {
+    createUser: async (message) => {
+      await prisma.user.update({
+        where: { id: message.user.id },
+        data: {
+          description: {
+            create: {
+              name: message.user.name || message.user.id,
+            },
+          },
+        },
+      });
+    },
+  },
   // Configure one or more authentication providers
   adapter: PrismaAdapter(prisma),
   providers: [

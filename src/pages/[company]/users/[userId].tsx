@@ -32,7 +32,7 @@ const UserPage = () => {
         )}
       </p>
       <h2>Description</h2>
-      <ReactMarkdown>{user?.details || "empty"}</ReactMarkdown>
+      <ReactMarkdown>{user?.description?.detail || "empty"}</ReactMarkdown>
     </ProsePage>
   );
 };
