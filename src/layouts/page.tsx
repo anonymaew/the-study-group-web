@@ -8,7 +8,7 @@ const Page = (props: {
     <div className="bg-zinc-100 dark:bg-zinc-900">
       <Navbar />
       <div
-        className={`container mx-auto min-h-screen p-4 pt-16 ${
+        className={`mx-auto min-h-screen max-w-7xl p-4 pt-8 ${
           props.loading ? "animate-pulse blur" : ""
         }`}
       >

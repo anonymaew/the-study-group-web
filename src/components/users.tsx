@@ -10,9 +10,6 @@ const Users = (props: {
     noName?: boolean;
   };
 }) => {
-  useEffect(() => {
-    console.log("got refreshed");
-  }, []);
   return (
     <span className="">
       {props.data.map((user, index) => (
@@ -23,9 +20,12 @@ const Users = (props: {
               src={user.image}
               alt={user.name}
               referrerPolicy="no-referrer"
+              onError={(e) => {
+                e.currentTarget.src = "/gray.jpeg";
+              }}
             ></img>
           ) : (
-            <span className="my-0 aspect-square w-9 rounded-full bg-gray-300"></span>
+            <span className="my-0 inline-block aspect-square w-9 rounded-full bg-zinc-300"></span>
           )}
         </span>
       ))}

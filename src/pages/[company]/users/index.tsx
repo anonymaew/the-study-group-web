@@ -32,6 +32,7 @@ const UsersPage = () => {
                 authors: [],
               }))
       }
+      layout={"lists"}
     ></ItemsPage>
   );
 };

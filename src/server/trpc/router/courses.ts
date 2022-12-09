@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 import {
     courseCreate, courseReadOne, courseUpdateApprove, courseUpdateContent
 } from '../../../types/courses';
@@ -35,14 +37,26 @@ export const courseRouter = router({
       });
     }),
   read: router({
-    all: publicProcedure.query(async ({ ctx }) => {
-      return await ctx.prisma.course.findMany({
-        include: {
-          page: true,
-          teacherEnrollment: { select: { user: true } },
-        },
-      });
-    }),
+    all: publicProcedure
+      .input(z.object({ search: z.string() }))
+      .query(async ({ ctx, input }) => {
+        return await ctx.prisma.course.findMany({
+          where:
+            input.search !== ""
+              ? {
+                  page: {
+                    name: {
+                      contains: input.search,
+                    },
+                  },
+                }
+              : undefined,
+          include: {
+            page: true,
+            teacherEnrollment: { select: { user: true } },
+          },
+        });
+      }),
     enrolled: protectedProcedure.query(async ({ ctx }) => {
       return await ctx.prisma.course.findMany({
         where: {

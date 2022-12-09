@@ -3,9 +3,10 @@ import { z } from 'zod';
 import { page } from './pages';
 
 export const courseId = z.string();
+export const courseName = z.string().min(1, { message: "Please put a name" });
 
 export const courseCreate = z.object({
-  name: z.string(),
+  name: courseName,
   companyId: z.string(),
 });
 
