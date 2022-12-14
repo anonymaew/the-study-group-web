@@ -1,12 +1,16 @@
 // import 'katex/dist/katex.min.css';
 import 'quill/dist/quill.snow.css';
 
+import dynamic from 'next/dynamic';
 // import katex from 'katex';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useQuill } from 'react-quilljs';
 
 import { DocumentArrowDownIcon } from '@heroicons/react/20/solid';
 
+const ImageCompress = dynamic(() => import("quill-image-compress"), {
+  ssr: false,
+});
 const Editor = (props: {
   content: string;
   setContent: Dispatch<SetStateAction<string>>;
@@ -42,7 +46,7 @@ const Editor = (props: {
   }, [quill]);
 
   if (Quill && !quill) {
-    Quill.register("modules/imageCompress", require("quill-image-compress"));
+    Quill.register("modules/imageCompress", ImageCompress);
     Quill.register();
   }
 
