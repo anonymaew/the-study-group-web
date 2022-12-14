@@ -1,8 +1,6 @@
 // import katex from 'katex';
 import 'material-icons/iconfont/filled.css';
 
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-
 import Heading, { Level } from '@tiptap/extension-heading';
 import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';

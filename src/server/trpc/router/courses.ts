@@ -75,8 +75,8 @@ export const courseRouter = router({
       });
     }),
     one: publicProcedure.input(courseReadOne).query(async ({ ctx, input }) => {
-      return await ctx.prisma.course.findUnique({
-        where: { id: input.id },
+      return await ctx.prisma.course.findFirst({
+        where: { id: { endsWith: input.id } },
         include: {
           page: true,
           teacherEnrollment: { select: { user: true } },

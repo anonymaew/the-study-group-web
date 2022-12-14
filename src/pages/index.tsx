@@ -26,7 +26,7 @@ const Home: NextPage = () => {
       <main className="mx-auto flex min-h-screen items-center justify-center bg-white dark:bg-zinc-900">
         <div className="grid w-full max-w-4xl grid-flow-row text-3xl font-bold text-white sm:px-6 ">
           <div className="grid p-3 sm:grid-cols-1">
-            <HomeButton to="the-study-group">
+            <HomeButton to="tsg">
               <p className="my-6 sm:my-12">The Study Group</p>
             </HomeButton>
           </div>
