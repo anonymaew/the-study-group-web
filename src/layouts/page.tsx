@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { Page, User } from '@prisma/client';
 
-import Editor from '../components/editor';
+import RichTextEditor from '../components/editor';
 import Users from '../components/users';
 import { useCourseInterface } from '../lib/useCourse';
 import ProsePage from './prose';
@@ -15,18 +15,11 @@ const Page = (props: {
     edit?: (content: string) => void;
   };
 }) => {
-  const [pageDetail, setPageDetail] = useState<string>(
-    props.data?.detail || ""
-  );
-  const [edit, setEdit] = useState<boolean>(false);
+  const [page, setPage] = useState<Page | null | undefined>(props.data);
 
   useEffect(() => {
-    if (props.data) setPageDetail(props.data?.detail || "");
+    setPage(props.data);
   }, [props.data]);
-
-  useEffect(() => {
-    console.log("pageDetail", pageDetail);
-  }, [pageDetail]);
 
   return (
     <ProsePage head={props.head} contentLoading={props.data === undefined}>
@@ -46,29 +39,15 @@ const Page = (props: {
               })}`}
             </span>
           </div>
-          <div className="flex items-center justify-center">
-            {props.head.course?.write && props.write?.edit && (
-              <button
-                className="w-48 rounded-md bg-amber-500 p-2 transition duration-200 ease-in-out hover:bg-amber-600"
-                onClick={() => setEdit(!edit)}
-              >{`Switch to ${edit ? "preview" : "edit"} mode`}</button>
-            )}
-          </div>
         </div>
-        {edit ? (
-          <Editor
-            content={pageDetail}
-            setContent={setPageDetail}
-            save={() => {
-              console.log("page", pageDetail);
-              props.write?.edit?.(pageDetail);
+        {page !== undefined && (
+          <RichTextEditor
+            content={page?.detail || "(empty)"}
+            writable={props.head.course?.write || false}
+            save={(content) => {
+              if (props.write?.edit) props.write.edit(content);
             }}
           />
-        ) : (
-          <div
-            className="no-prose"
-            dangerouslySetInnerHTML={{ __html: pageDetail }}
-          ></div>
         )}
       </div>
     </ProsePage>

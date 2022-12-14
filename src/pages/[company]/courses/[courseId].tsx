@@ -5,8 +5,12 @@ import { trpc } from '../../../utils/trpc';
 const CoursePage = () => {
   const data = useCourse();
   const { data: courseData, isLoading } = trpc.course.read.one.useQuery(
-    { id: data.course?.id || "-" },
-    { enabled: data.course !== undefined && data.course !== null }
+    { id: data.router?.query.courseId?.toString() || "-" },
+    {
+      enabled:
+        data.router?.isReady &&
+        data.router?.query.courseId?.toString() !== undefined,
+    }
   );
   const courseUpdate = trpc.course.update.content.useMutation();
 
