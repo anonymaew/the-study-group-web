@@ -1,14 +1,12 @@
-import { useRouter } from 'next/router';
-
 import ProsePage from '../../layouts/prose';
+import useCompany from '../../lib/useCompany';
 
 const CompanyMainPage = () => {
-  const router = useRouter();
-  const { company } = router.query;
+  const data = useCompany();
   return (
-    <ProsePage>
+    <ProsePage head={data} contentLoading={false}>
       <h1 className=" text-center text-5xl font-black">
-        {company} home page something
+        {data.company?.name} home page something
       </h1>
     </ProsePage>
   );

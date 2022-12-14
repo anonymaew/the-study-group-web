@@ -15,7 +15,7 @@ export const courseReadOne = z.object({
 });
 
 export const courseUpdateContent = z.object({
-  id: courseId,
+  courseId,
   page: page,
 });
 

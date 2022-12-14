@@ -2,17 +2,22 @@ import { useRouter } from 'next/router';
 import ReactMarkdown from 'react-markdown';
 
 import ProsePage from '../../../layouts/prose';
+import useCompany from '../../../lib/useCompany';
 import { trpc } from '../../../utils/trpc';
 
 const UserPage = () => {
-  const router = useRouter();
-  const { userId } = router.query as { userId: string };
-  const { data: user, isLoading } = trpc.user.read.one.useQuery({
-    id: userId,
-  });
+  const data = useCompany();
+  const { data: user, isLoading } = trpc.user.read.one.useQuery(
+    {
+      id: data.router?.query.userId as string,
+    },
+    {
+      enabled: data.router?.isReady && data.router?.query.userId !== undefined,
+    }
+  );
 
   return (
-    <ProsePage loading={isLoading || user === undefined || user === null}>
+    <ProsePage head={data} contentLoading={isLoading}>
       <div className="mx-auto my-8 aspect-square w-48 rounded-full bg-zinc-500">
         {user?.image && (
           <img

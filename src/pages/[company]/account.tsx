@@ -1,16 +1,18 @@
-import { signIn, signOut, useSession } from 'next-auth/react';
+import { signIn, signOut } from 'next-auth/react';
 
 import ProsePage from '../../layouts/prose';
+import useCompany from '../../lib/useCompany';
 
 const AccountPage = () => {
-  const { data: session, status } = useSession();
+  const head = useCompany();
+  const { user: userData } = head;
 
   return (
-    <ProsePage loading={status === "loading"}>
-      {session && session.user ? (
+    <ProsePage head={head} contentLoading={userData === undefined}>
+      {userData ? (
         <div>
-          <h1>{session.user.name} account page</h1>
-          <p>Email: {session.user.email}</p>
+          <h1>{userData.name} account page</h1>
+          <p>Email: {userData.email}</p>
           <button
             onClick={() => {
               signOut();

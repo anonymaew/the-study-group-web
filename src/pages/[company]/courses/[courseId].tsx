@@ -1,29 +1,42 @@
-import { useRouter } from 'next/router';
-
-import Blog from '../../../components/blog';
-import ProsePage from '../../../layouts/prose';
+import Page from '../../../layouts/page';
+import useCourse from '../../../lib/useCourse';
 import { trpc } from '../../../utils/trpc';
 
 const CoursePage = () => {
-  const router = useRouter();
-  const { courseId } = router.query;
-  const { data: course, isLoading } = trpc.course.read.one.useQuery({
-    id: courseId as string,
-  });
+  const data = useCourse();
+  const { data: courseData, isLoading } = trpc.course.read.one.useQuery(
+    { id: data.course?.id || "-" },
+    { enabled: data.course !== undefined && data.course !== null }
+  );
+  const courseUpdate = trpc.course.update.content.useMutation();
 
   return (
-    <ProsePage loading={isLoading || course === undefined || course === null}>
-      <div className="mx-auto my-8 aspect-video max-w-xl bg-zinc-500 text-center"></div>
-      {course && (
-        <Blog
-          data={course.page}
-          authors={course.teacherEnrollment.map(
-            (enrollment) => enrollment.user
-          )}
-          writable={false}
-        />
-      )}
-    </ProsePage>
+    <Page
+      head={data}
+      data={
+        isLoading
+          ? undefined
+          : (courseData && {
+              ...courseData.page,
+              authors: courseData.teacherEnrollment.map(
+                (enrollment) => enrollment.user
+              ),
+            }) ||
+            null
+      }
+      write={{
+        edit: (content) => {
+          if (courseData)
+            courseUpdate.mutate({
+              courseId: data.course?.id || "-",
+              page: {
+                ...courseData.page,
+                detail: content,
+              },
+            });
+        },
+      }}
+    ></Page>
   );
 };
 

@@ -1,21 +1,17 @@
-import { useRouter } from 'next/router';
-
 import { Page, User } from '@prisma/client';
 
 import ItemsPage from '../../../layouts/items';
+import useCompany from '../../../lib/useCompany';
 import { trpc } from '../../../utils/trpc';
 
 const UsersPage = () => {
-  const router = useRouter();
-  const { company, role } = router.query as {
-    company: string;
-    role?: string | null;
-  };
-  const { data: users, isLoading } = trpc.user.read.all.useQuery();
+  const data = useCompany();
+  const { data: users, isLoading: usersLoading } =
+    trpc.user.read.all.useQuery();
 
   return (
     <ItemsPage
-      loading={isLoading || users === null || users === undefined}
+      head={data}
       heading={"Users"}
       items={
         users === undefined
@@ -25,13 +21,14 @@ const UsersPage = () => {
                 (user): user is User & { description: NonNullable<Page> } =>
                   user.description !== null
               )
-              .map((user, index) => ({
+              .map((user) => ({
                 ...user.description,
                 name: user.name,
-                link: `/${company}/users/${user.id.slice(-6)}`,
+                link: `/${data.company?.id}/users/${user.id.slice(-6)}`,
                 authors: [],
               }))
       }
+      contentLoading={usersLoading}
       layout={"lists"}
     ></ItemsPage>
   );

@@ -75,11 +75,35 @@ export const courseRouter = router({
       });
     }),
     one: publicProcedure.input(courseReadOne).query(async ({ ctx, input }) => {
-      return await ctx.prisma.course.findFirst({
-        where: { id: { endsWith: input.id } },
+      return await ctx.prisma.course.findUnique({
+        where: { id: input.id },
         include: {
           page: true,
           teacherEnrollment: { select: { user: true } },
+        },
+      });
+    }),
+    head: publicProcedure.input(courseReadOne).query(async ({ ctx, input }) => {
+      return await ctx.prisma.course.findFirst({
+        where: { id: { endsWith: input.id } },
+        select: {
+          id: true,
+          page: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          teacherEnrollment: {
+            where: {
+              userId: ctx.session?.user?.id || "-",
+            },
+          },
+          studentEnrollment: {
+            where: {
+              userId: ctx.session?.user?.id || "-",
+            },
+          },
         },
       });
     }),
@@ -90,7 +114,7 @@ export const courseRouter = router({
       .mutation(async ({ ctx, input }) => {
         return await ctx.prisma.course.update({
           where: {
-            id: input.id,
+            id: input.courseId,
           },
           data: {
             page: {

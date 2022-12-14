@@ -1,25 +1,25 @@
-import { Field, Form, Formik, useFormik, useFormikContext } from 'formik';
+import { Field, Form, Formik } from 'formik';
 import Link from 'next/link';
-import React, { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { MagnifyingGlassIcon, QueueListIcon, Squares2X2Icon } from '@heroicons/react/20/solid';
 import { Page, User } from '@prisma/client';
-import { UseMutateFunction } from '@tanstack/react-query';
-import { UseTRPCMutationResult } from '@trpc/react/shared';
 
 import Users from '../components/users';
+import { useCompanyInterface } from '../lib/useCompany';
 import ProsePage from './prose';
 
 interface ItemsPageProps {
-  loading?: boolean;
+  head: useCompanyInterface;
   heading: string;
-  items: Array<
+  items?: Array<
     Page & {
       link: string;
       authors: User[];
       price?: number;
     }
   >;
+  contentLoading: boolean;
   layout: "cards" | "lists";
   functions?: {
     search?: (search: string) => void;
@@ -62,7 +62,7 @@ const ItemsPage = (props: ItemsPageProps) => {
   // }, [values]);
 
   return (
-    <ProsePage loading={props.loading}>
+    <ProsePage head={props.head} contentLoading={props.contentLoading}>
       <h1 className="">{props.heading}</h1>
       <div className="my-4 flex items-center justify-between border-b border-zinc-500 pb-4">
         <div>
@@ -89,8 +89,10 @@ const ItemsPage = (props: ItemsPageProps) => {
             name="sort"
             className="mr-4 rounded-md border-none bg-zinc-200 transition duration-200 ease-in-out hover:bg-zinc-300 focus-visible:ring-0 dark:bg-zinc-700 dark:hover:bg-zinc-600"
           >
-            {Object.entries(sortOptions).map(([key, value]) => (
-              <option value={value}>{value}</option>
+            {Object.entries(sortOptions).map(([key, value], index) => (
+              <option value={value} key={index}>
+                {value}
+              </option>
             ))}
           </select>
         </div>
@@ -112,7 +114,7 @@ const ItemsPage = (props: ItemsPageProps) => {
         </div>
       </div>
 
-      {layout === "cards" ? (
+      {props.items === undefined ? null : layout === "cards" ? (
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
           {props.items.map((item, index) => (
             <div
@@ -140,7 +142,7 @@ const ItemsPage = (props: ItemsPageProps) => {
               </Link>
             </div>
           ))}
-          {props.write !== undefined && (
+          {props.write && props.write.create && (
             <div className="h-full w-full rounded-lg bg-blue-200 p-4 text-blue-800 no-underline transition duration-200 ease-in-out dark:bg-blue-900 dark:text-blue-200">
               <p className="text-center text-lg font-bold">Create</p>
               <Formik
